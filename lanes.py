@@ -33,7 +33,7 @@ def average_slope_intercept(image,lines):
 def canny(image):
     gray=cv2.cvtColor(image,cv2.COLOR_RGB2GRAY)
     blur=cv2.GaussianBlur(gray,(5,5),0)
-    canny=cv2.Canny(blur,50,150)#change ratio to outline defferent amounts of objects
+    canny=cv2.Canny(blur,125,350)#change ratio to outline defferent amounts of objects
     return canny
 
 def display_lines(image, lines):
@@ -45,31 +45,32 @@ def display_lines(image, lines):
 
 def region_of_interest(image):
     height=image.shape[0]
-    polygons=np.array([[(200,height),(1100,height),(550,250),]])#coords of triangle (left,right,top)
+    polygons=np.array([[(50,height),(1230,height),(800,450),(450,450),]])#coords of triangle (left,right,top)
     mask=np.zeros_like(image)
     cv2.fillPoly(mask,polygons,255)
     masked_image=cv2.bitwise_and(image,mask)
     return masked_image
 
-#image = cv2.imread('test_image.jpg')#read image file
-#lane_image=np.copy(image)
-#canny_image=canny(lane_image)
-#cropped_image=region_of_interest(canny_image)
-#lines=cv2.HoughLinesP(cropped_image,2,np.pi/180, 100, np.array([]), minLineLength=40, maxLineGap=5)#(create size of bins, thresehold for line to be drawn)
-#averaged_lines= average_slope_intercept(lane_image,lines)
-#line_image= display_lines(lane_image, averaged_lines)
-#combo_image=cv2.addWeighted(lane_image, 0.8, line_image, 1, 1)
-#cv2.imshow('result',combo_image) 
-#cv2.waitKey(0)
 
-cap=cv2.VideoCapture("test2.mp4")
+
+cap = cv2.VideoCapture("(720,60).mp4")
+old_lines = 0
 while(cap.isOpened()):
-    _,frame=cap.read()
-    canny_image=canny(frame)
-    cropped_image=region_of_interest(canny_image)
-    lines=cv2.HoughLinesP(cropped_image,2,np.pi/180, 100, np.array([]), minLineLength=40, maxLineGap=5)#(create size of bins, thresehold for line to be drawn)
-    averaged_lines= average_slope_intercept(frame,lines)
-    line_image= display_lines(frame, averaged_lines)
-    combo_image=cv2.addWeighted(frame, 0.8, line_image, 1, 1)
-    cv2.imshow('result',combo_image) 
-    cv2.waitKey(1)
+    _, frame = cap.read()
+ 
+    canny_image = canny(frame)
+    cropped_image = region_of_interest(canny_image)
+    lines = cv2.HoughLinesP(cropped_image, 1, np.pi/180, 100, np.array([]), minLineLength=40, maxLineGap=5)
+    try:
+        averaged_lines = average_slope_intercept(frame, lines)
+        line_image = display_lines(frame, averaged_lines)
+        old_lines = averaged_lines
+    except:
+        line_image = display_lines(frame, old_lines)
+    combo_image = cv2.addWeighted(frame, 0.8, line_image, 1, 1)
+    cv2.imshow('result', combo_image)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+ 
+cap.release()
+cv2.destroyAllWindows()

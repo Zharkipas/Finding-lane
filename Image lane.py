@@ -33,7 +33,7 @@ def average_slope_intercept(image,lines):
 def canny(image):
     gray=cv2.cvtColor(image,cv2.COLOR_RGB2GRAY)
     blur=cv2.GaussianBlur(gray,(5,5),0)
-    canny=cv2.Canny(blur,100,200)#change ratio to outline defferent amounts of objects
+    canny=cv2.Canny(blur,125,350)#change ratio to outline defferent amounts of objects
     return canny
 
 def display_lines(image, lines):
@@ -45,7 +45,7 @@ def display_lines(image, lines):
 
 def region_of_interest(image):
     height=image.shape[0]
-    polygons=np.array([[(100,height),(1250,height),(600,400),]])#coords of triangle (left,right,top)
+    polygons=np.array([[(50,height),(1230,height),(800,450),(450,450),]])#coords of triangle (left,right,top)
     mask=np.zeros_like(image)
     cv2.fillPoly(mask,polygons,255)
     masked_image=cv2.bitwise_and(image,mask)
@@ -59,6 +59,6 @@ lines=cv2.HoughLinesP(cropped_image,2,np.pi/180, 100, np.array([]), minLineLengt
 averaged_lines= average_slope_intercept(lane_image,lines)
 line_image= display_lines(lane_image, averaged_lines)
 combo_image=cv2.addWeighted(lane_image, 0.8, line_image, 1, 1)
-cv2.imshow('result',combo_image) 
+cv2.imshow('result',cropped_image) 
 cv2.waitKey(0)
 
