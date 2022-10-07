@@ -54,20 +54,24 @@ def region_of_interest(image):
 cap = cv2.VideoCapture("lane/(720,60).mp4")
 old_lines = 0
 while(cap.isOpened()):
+
     _, frame = cap.read()
     canny_image = canny(frame)
     cropped_image = region_of_interest(canny_image)
     lines = cv2.HoughLinesP(cropped_image, 1, np.pi/180, 100, np.array([]), minLineLength=40, maxLineGap=5)
+
     try:
         averaged_lines = average_slope_intercept(frame, lines)
         line_image = display_lines(frame, averaged_lines)
         old_lines = averaged_lines
+
     except:
         line_image = display_lines(frame, old_lines)
-    combo_image = cv2.addWeighted(frame, 0.8, line_image, 1, 1)
-    cv2.imshow('result', combo_image)
+        combo_image = cv2.addWeighted(frame, 0.8, line_image, 1, 1)
+        cv2.imshow('result', combo_image)
+        
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
- 
+        
 cap.release()
 cv2.destroyAllWindows()
