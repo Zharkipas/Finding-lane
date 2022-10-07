@@ -51,13 +51,10 @@ def region_of_interest(image):
     masked_image=cv2.bitwise_and(image,mask)
     return masked_image
 
-
-
 cap = cv2.VideoCapture("lane/(720,60).mp4")
 old_lines = 0
 while(cap.isOpened()):
     _, frame = cap.read()
- 
     canny_image = canny(frame)
     cropped_image = region_of_interest(canny_image)
     lines = cv2.HoughLinesP(cropped_image, 1, np.pi/180, 100, np.array([]), minLineLength=40, maxLineGap=5)
