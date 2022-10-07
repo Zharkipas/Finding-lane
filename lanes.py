@@ -51,7 +51,7 @@ def region_of_interest(image):
     masked_image=cv2.bitwise_and(image,mask)
     return masked_image
 
-cap = cv2.VideoCapture("lane/(720,60).mp4")
+cap = cv2.VideoCapture("(720,60).mp4")
 old_lines = 0
 while(cap.isOpened()):
 
@@ -75,3 +75,4 @@ while(cap.isOpened()):
         
 cap.release()
 cv2.destroyAllWindows()
+
